@@ -2,41 +2,46 @@ import os
 import re
 import json
 
-# 入力ディレクトリと出力JSONファイル
-input_directory = "/mnt/hdd1/toyo/workspace/data"  # 変更してください
-output_json = "hsi_data_ids.json"
+def extract_hsi_data(input_directory, output_json):
+    """
+    指定したディレクトリ内の .nh9 ファイルをスキャンし、ファイル名から日時を抽出して
+    階層構造に基づくフォルダ情報と共にJSONファイルに保存する。
 
-# ファイル名から日時を抽出する正規表現
-pattern = re.compile(r".*_(\d{8}_\d{6})\.nh9")
+    - ファイル名から日時情報を取得（形式: YYYYMMDD_HHMMSS）
+    - ファイルのディレクトリ階層から「日時フォルダ」と「場所フォルダ」を取得
+    - 取得した情報をリストに格納し、JSONファイルとして保存
 
-# データを格納するリスト
-hsi_data = []
+    Args:
+        input_directory (str): NH9ファイルを含む親ディレクトリのパス。
+        output_json (str): 抽出したデータを保存するJSONファイルのパス。
 
-# ファイルをスキャンして日時を抽出
-for root, dirs, files in os.walk(input_directory):
-    for file in files:
-        if file.endswith(".nh9"):
-            match = pattern.match(file)
-            if match:
-                # 日時部分を抽出
-                datetime_str = match.group(1)
+    Returns:
+        None
+    """
 
-                # 階層構造から日時フォルダと場所フォルダを取得
-                relative_path = os.path.relpath(root, input_directory)
-                path_parts = relative_path.split(os.sep)
-                datetime_folder = path_parts[0] if len(path_parts) > 0 else ""
-                location_folder = path_parts[1] if len(path_parts) > 1 else ""
+    pattern = re.compile(r".*_(\d{8}_\d{6})\.nh9")
+    hsi_data = []
 
-                # データを追加
-                hsi_data.append({
-                    "file_name": file,
-                    "id": datetime_str,
-                    "datetime_folder": datetime_folder,
-                    "location_folder": location_folder
-                })
+    for root, _, files in os.walk(input_directory):
+        for file in files:
+            if file.endswith(".nh9"):
+                match = pattern.match(file)
+                if match:
+                    datetime_str = match.group(1)
+                    relative_path = os.path.relpath(root, input_directory)
+                    path_parts = relative_path.split(os.sep)
 
-# JSONファイルに書き出し
-with open(output_json, "w", encoding="utf-8") as f:
-    json.dump(hsi_data, f, ensure_ascii=False, indent=4)
+                    hsi_data.append({
+                        "file_name": file,
+                        "id": datetime_str,
+                        "datetime_folder": path_parts[0] if len(path_parts) > 0 else "",
+                        "location_folder": path_parts[1] if len(path_parts) > 1 else ""
+                    })
 
-print(f"Extracted HSI data saved to {output_json}")
+    with open(output_json, "w", encoding="utf-8") as f:
+        json.dump(hsi_data, f, ensure_ascii=False, indent=4)
+
+    print(f"Extracted HSI data saved to {output_json}")
+
+if __name__ == "__main__":
+    extract_hsi_data("/mnt/hdd1/toyo/workspace/data", "hsi_data_ids.json")
