@@ -5,12 +5,12 @@ HSI Scene Dataset リポジトリは、ハイパースペクトル画像 (HSI) �
 
 ## ディレクトリ構成
 ```
-├── extract_id.py        # NH9 ファイルの ID とファイル情報を JSON に保存
-├── hs_to_rgbV2.py       # NH9 ファイルから RGB 画像を生成
-├── mainCUI.py           # NH9 ファイルを HDF5 形式に圧縮・保存
-├── spectralview.py      # NH9 ファイルのスペクトルバンドを可視化
-├── tagcount.py          # メタデータ JSON 内のタグを集計・可視化
-├── metadata.json        # HSI 画像のメタデータ（オブジェクトタグ・シーンタグを含む）
+├── scripts
+│  ├── extract_id.py        # NH9 ファイルの ID とファイル情報を JSON に保存
+│  ├── hs_to_rgbV2.py       # NH9 ファイルから RGB 画像を生成
+│  ├── mainCUI.py           # NH9 ファイルを HDF5 形式に圧縮・保存
+│  ├── spectralview.py      # NH9 ファイルのスペクトルバンドを可視化
+│  ├── tagcount.py          # メタデータ JSON 内のタグを集計・可視化
 └── README.md            # 本ドキュメント
 ```
 
